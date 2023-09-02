@@ -56,7 +56,7 @@ public class Scanner {
                     addToken(SLASH);
                 }
             }
-            case ' ','r','\t' -> {}
+            case ' ','\r','\t' -> {}
             case '\n' -> {
                 line++;
             }

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Token {
     TokenType tokenType;
-    String lexeme;
+    public String lexeme;
     Object literal;
     int line;
     int startPos;
@@ -19,6 +19,15 @@ public class Token {
         this.endPos = endPos;
     }
 
+    public Token(TokenType tokenType, String lexeme, Object literal) {
+        this.tokenType = tokenType;
+        this.lexeme = lexeme;
+        this.literal = literal;
+        this.line = 0;
+        this.startPos = 0;
+        this.endPos = 0;
+    }
+
     public static Token EOF(int pos, int line) {
         return new Token(TokenType.EOF, "", null, pos, pos, line);
     }
@@ -28,11 +37,7 @@ public class Token {
         return "{" +
             "\"tokenType\":" + "\"" + tokenType + "\"" + "," +
             "\"lexeme\":" + "\"" + lexeme + "\"" + "," +
-            "\"literal\":" + literal + "," +
-            "\"line\":" + line + "," +
-            "\"startPos\":" + startPos + "," +
-            "\"endPos\":" + endPos +
-            "}";
+            "\"literal\":" + literal + "}";
     }
 
     @Override

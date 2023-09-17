@@ -6,6 +6,13 @@ import java.util.Objects;
 
 import static dev.alanl.jinterpreter.TokenType.*;
 
+/**
+ * The Scanner class is the first stage of our interpreter, responsible for converting
+ * the source code into a list of tokens through lexical analysis. It processes the input
+ * source code character by character, recognizing lexemes, associating token types, and
+ * maintaining token metadata such as line numbers and positions. The resulting tokens
+ * are essential for the subsequent stages of parsing and interpreting the code.
+ */
 public class Scanner {
     private final List<Token> tokens = new ArrayList<>();
     private String source = null;
@@ -41,10 +48,23 @@ public class Scanner {
             case '+' -> addToken(PLUS);
             case ';' -> addToken(SEMICOLON);
             case '*' -> addToken(STAR);
+
+            /**
+             * Certain characters need to be scanned as potential multi-character lexemes.
+             * For example, when encountering '!', it can be part of '!=' or just a single '!' token.
+             * Similarly, '=' can represent '==' or '=' independently, and '<' and '>' can form '<=', '>=',
+             * or be standalone '<' and '>'.
+             * This logic checks for these multi-character combinations and adds the appropriate tokens.
+             */
             case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
             case '='-> addToken(match('=') ? EQUAL_EQUAL : EQUAL);
             case '<'-> addToken(match('=') ? LESS_EQUAL : LESS);
             case '>'-> addToken(match('=') ? GREATER_EQUAL : GREATER);
+
+            /**
+             * '/' can be part of a division operator or a comment line. To check that, the scanner checks
+             * if '/' is followed by another '/', if so the rest of the characters till the EOL is ignored
+             */
             case '/' -> {
                 if (match('/')) {
                     while (peek()!='\n' && !isAtEnd()) {
@@ -54,6 +74,7 @@ public class Scanner {
                     addToken(SLASH);
                 }
             }
+
             case ' ','\r','\t' -> {}
             case '\n' -> {
                 line++;
@@ -155,6 +176,14 @@ public class Scanner {
         addToken(NUMBER, Double.parseDouble(source.substring(startPos, currentPos)));
     }
 
+    /**
+     * The `identifier` method is responsible for recognizing and tokenizing identifiers in the source code.
+     * An identifier is a sequence of letters, digits, and underscores that represents variable names, function names,
+     * or user-defined symbols. This method performs a "maximal munch" operation, meaning it consumes as many
+     * consecutive alphanumeric characters as possible to form a single identifier lexeme. It then checks if the
+     * lexeme corresponds to a keyword, and if so, associates it with the appropriate keyword token; otherwise,
+     * it is treated as a generic identifier token.
+     */
     private void identifier() {
         while (isAlphaNumeric(peek())) {
             advance();

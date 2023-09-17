@@ -105,9 +105,10 @@ public class Parser {
     private void consume(TokenType tokenType, String error) {
         if (check(tokenType)) {
             advance();
+            return;
         }
 
-        throw new IllegalArgumentException("error occured "+error);
+        throw new IllegalArgumentException("error occured " + error + " token " + peek());
     }
 
     private void advance(){

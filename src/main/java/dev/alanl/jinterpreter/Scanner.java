@@ -62,10 +62,12 @@ public class Scanner {
             default -> {
                 if (isDigit(c)) {
                     number();
+                    return;
                 }
 
                 if (isAlpha(c)) {
                     identifier();
+                    return;
                 }
 
                 System.out.println("Error occurred, unexpected character " + c + " at line:" + line + "position:" + startPos);

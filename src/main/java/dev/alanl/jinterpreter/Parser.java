@@ -1,8 +1,6 @@
 package dev.alanl.jinterpreter;
 
-import dev.alanl.jinterpreter.ast.Binary;
-import dev.alanl.jinterpreter.ast.Expr;
-import dev.alanl.jinterpreter.ast.Unary;
+import dev.alanl.jinterpreter.ast.*;
 
 import java.util.List;
 
@@ -11,7 +9,6 @@ import static dev.alanl.jinterpreter.TokenType.*;
 public class Parser {
     List<Token> tokens;
     private int current = 0;
-
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
@@ -77,6 +74,20 @@ public class Parser {
     }
 
     private Expr primary() {
+        if(match(TRUE)) return new Literal(TRUE);
+        if (match(FALSE)) return new Literal(FALSE);
+        if (match(NIL)) return new Literal(null);
+
+        if (match(NUMBER, STRING)) {
+            return new Literal(previous().literal);
+        }
+
+        if (match(LEFT_PAREN)) {
+            Expr expr = expression();
+            consume(RIGHT_PAREN,"cannot find right parenthesis");
+            return new Grouping(expr);
+        }
+
         return null;
     }
 
@@ -89,6 +100,14 @@ public class Parser {
         }
 
         return false;
+    }
+
+    private void consume(TokenType tokenType, String error) {
+        if (check(tokenType)) {
+            advance();
+        }
+
+        throw new IllegalArgumentException("error occured "+error);
     }
 
     private void advance(){

@@ -18,7 +18,6 @@ public class Scanner {
         this.source = source;
     }
 
-
     public List<Token> scanTokens() {
         while (!isAtEnd()) {
             this.startPos = currentPos;
@@ -28,7 +27,6 @@ public class Scanner {
         tokens.add(Token.EOF(source.length() - 1, line));
         return tokens;
     }
-
 
     private void scanToken() {
         char c = advance();
@@ -74,8 +72,7 @@ public class Scanner {
             }
         }
     }
-
-
+    
     private char peek() {
         return isAtEnd() ? '\0' : source.charAt(currentPos);
     }

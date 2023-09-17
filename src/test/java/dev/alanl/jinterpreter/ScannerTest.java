@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ScannerTest {
 
     @Test
@@ -83,7 +81,7 @@ class ScannerTest {
                 new Token(TokenType.WHILE, "while", null),
                 new Token(TokenType.LEFT_PAREN,"(",null),
                 new Token(TokenType.TRUE,"true",null),
-                new Token(TokenType.L,",",null),
+                new Token(TokenType.COMMA,",",null),
                 new Token(TokenType.IDENTIFIER,"b",null),
                 new Token(TokenType.RIGHT_PAREN,"{",null),
                 new Token(TokenType.RETURN,"return",null),

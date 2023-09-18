@@ -23,6 +23,7 @@ import static dev.alanl.jinterpreter.TokenType.*;
 public class Parser {
     List<Token> tokens;
     private int current = 0;
+    private boolean hasError = false;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
@@ -162,6 +163,11 @@ public class Parser {
 
     private ErrorUtils.ParseError error(Token token, String message) {
         ErrorUtils.error(token, message);
+        hasError = true;
         return new ErrorUtils.ParseError(token, message);
+    }
+
+    public boolean hasError() {
+        return hasError;
     }
 }

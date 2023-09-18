@@ -49,12 +49,12 @@ public class Scanner {
             case ';' -> addToken(SEMICOLON);
             case '*' -> addToken(STAR);
 
-            /**
-             * Certain characters need to be scanned as potential multi-character lexemes.
-             * For example, when encountering '!', it can be part of '!=' or just a single '!' token.
-             * Similarly, '=' can represent '==' or '=' independently, and '<' and '>' can form '<=', '>=',
-             * or be standalone '<' and '>'.
-             * This logic checks for these multi-character combinations and adds the appropriate tokens.
+            /*
+            Certain characters need to be scanned as potential multi-character lexemes.
+            For example, when encountering '!', it can be part of '!=' or just a single '!' token.
+            Similarly, '=' can represent '==' or '=' independently, and '<' and '>' can form '<=', '>=',
+            or be standalone '<' and '>'.
+            This logic checks for these multi-character combinations and adds the appropriate tokens.
              */
             case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
             case '='-> addToken(match('=') ? EQUAL_EQUAL : EQUAL);
@@ -91,7 +91,7 @@ public class Scanner {
                     return;
                 }
 
-                System.out.println("Error occurred, unexpected character " + c + " at line:" + line + "position:" + startPos);
+                ErrorUtils.error("Unexpected charecter", line, 0, 0);
             }
         }
     }

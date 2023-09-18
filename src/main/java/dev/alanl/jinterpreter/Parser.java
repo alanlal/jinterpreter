@@ -6,6 +6,20 @@ import java.util.List;
 
 import static dev.alanl.jinterpreter.TokenType.*;
 
+/**
+ * The parser class takes the list of tokens generated from the Scanner and creates an abstract syntax tree
+ * to represent the order of execution and the associativity of each operation. The parser uses recursive descent parsing
+ * to traverse the grammar rules in the specified order and associativity to generate the AST
+ *
+ * following grammar is implemented so far in recursive descent way
+ * expression     → equality ;
+ * equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+ * comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+ * term           → factor ( ( "-" | "+" ) factor )* ;
+ * factor         → unary ( ( "/" | "*" ) unary )* ;
+ * unary          → ( "!" | "-" ) unary | primary ;
+ * primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+ */
 public class Parser {
     List<Token> tokens;
     private int current = 0;
@@ -17,6 +31,16 @@ public class Parser {
     public Expr expression() {
         return equality();
     }
+
+    /**
+     * This method serves as a key component of a recursive descent parser, responsible for handling
+     * the "equality" expression defined in the grammar.
+     * In the grammar, the '*' operator symbolizes "0 or more occurrences," while the associated
+     * while loop iterates as long as matching tokens are found.
+     * The primary objective of this method is to parse and construct an Abstract Syntax Tree (AST)
+     * representing equality expressions, such as '==' and '!=' comparisons. A similar approach
+     * is followed for subsequent methods like 'comparison()', 'term()', 'factor()', and so on.
+     */
 
     private Expr equality() {
         Expr expr = comparison();
@@ -82,13 +106,15 @@ public class Parser {
             return new Literal(previous().literal);
         }
 
+        // as part of grouping, if we are matching a (, then we must match ) as well
+        // or else it is an error
         if (match(LEFT_PAREN)) {
             Expr expr = expression();
             consume(RIGHT_PAREN,"cannot find right parenthesis");
             return new Grouping(expr);
         }
 
-        return null;
+        throw error(peek(), "expression expected");
     }
 
     private boolean match(TokenType... matchTokens) {
@@ -108,7 +134,8 @@ public class Parser {
             return;
         }
 
-        throw new IllegalArgumentException("error occured " + error + " token " + peek());
+        //will be captured by "panic mode" error recovery
+        throw new ErrorUtils.ParseError(peek(), error);
     }
 
     private void advance(){
@@ -131,5 +158,10 @@ public class Parser {
 
     private Token previous() {
         return this.tokens.get(current - 1);
+    }
+
+    private ErrorUtils.ParseError error(Token token, String message) {
+        ErrorUtils.error(token, message);
+        return new ErrorUtils.ParseError(token, message);
     }
 }
